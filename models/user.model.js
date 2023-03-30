@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String, 
@@ -27,29 +26,49 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
 
-    createadAt: {
+    createdAt: {
+
         type: Date,
-        immutalble: true, 
+        immutable: true,
         default: () => {
             return Date.now();
         }
     },
-
+       
     updatedAt: { 
+
         type: Date,
-        immutalble: true, 
+        immutable: true,
+      
         default: () => {
-            return Date.now()
+            return Date.now();
         }
-    }, 
+    },
     
     userType: {
+        type: String,
+        required: true,
+        default: "CUSTOMER"
+    },
+
+
+    userStatus: {
 
         type: String, 
         required: true,
-        default: approved,
+        default: "PENDING",
 
 
+    },
+
+    ticketCreated : {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: "Ticket"
+    },
+
+    ticketAssigned : {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: "Ticket"
     }
 
 })
