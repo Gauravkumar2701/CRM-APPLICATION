@@ -32,7 +32,7 @@ verifyToken = (req, res, next) => {
 
 isAdmin = async(req, res, next) => {
 
-    const user = await User.findOne({userId: req.body.userId});
+    const user = await User.findOne({userId: req.userId});
 
     // console.log(user.userId, user.userType);
 

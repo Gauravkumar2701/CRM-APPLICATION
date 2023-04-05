@@ -53,3 +53,87 @@ exports.createTicket = async(req, res) => {
 
     }
 }
+
+exports.updateTicket = async(req, res) => {
+
+    const ticket = await Ticket.findOne({_id : req.params.id});
+    
+    const user = await User.findOne({userId: req.userId});
+
+    if (ticket.reporter == req.userId || ticket.assignee == req.userId || user.userType == constants.userTypes.admin){
+
+        ticket.title = req.body.title != undefined ? req.body.title : ticket.title
+        ticket.ticketPriority = req.body.ticketPriority != undefined ? req.body.ticketPriority : ticket.ticketPriority
+        ticket.description = req.body.description != undefined ? req.body.description : ticket.description
+        ticket.status = req.body.status != undefined ? req.body.status : ticket.status
+    
+        var updateTicket = await ticket.save();
+
+        res.status(200).send(objectConverter.ticketResponse(updateTicket))
+        return
+
+    }else{
+        console.log("Ticket was created by someone who has not crated the ticket");
+        res.sendStatus(400).send({
+            message: "Ticket can be updated only by the customer who created it or By the Engineer Whom the ticket is assigned or Admin."
+        })
+        return;
+
+    }
+
+}
+
+
+exports.findAllTickets = async(req, res) => {
+
+    try{
+
+        const queryObj = {}
+
+        if (req.query.status != undefined){
+            queryObj.status = req.query.status;
+        }   
+
+        const user = await User.findOne({userId: req.userId});
+      
+        if (user.userType == constants.userTypes.admin){
+            
+        }else if (user.userType == constants.userTypes.engineer){
+            queryObj.assignee = req.userId
+        }else{
+            queryObj.reporter = req.userId
+        }
+
+       
+        const ticket = await Ticket.find(queryObj);
+       
+        res.status(200).send(objectConverter.ticketResponses(ticket));
+        return;
+
+
+    }catch(err){
+        
+        console.log("Error hapend while retrieving the tickets", err.message);
+        res.status().send({
+            message: "Error while retrieving the tickets"
+        })
+    }
+
+
+}
+    
+
+exports.getOneTicket = async(req, res) => {
+
+    const id = req.params.id;
+
+    const ticket = await Ticket.findOne({_id: id})
+
+    if (!ticket){
+        res.status(400).send({message: "Error while Retrieving the ticket"});
+        return;
+    }else{
+        res.status(200).send(objectConverter.ticketResponse(ticket));
+        return;
+    }
+}

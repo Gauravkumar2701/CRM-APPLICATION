@@ -4,6 +4,7 @@ const constants = require("../utils/constants");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const config = require("../configs/secret");
+const objectConverter = require("../utils/objectConverter")
 
 exports.signup = async (req, res) => {
     var userStatus = req.body.userStatus;
@@ -27,16 +28,16 @@ exports.signup = async (req, res) => {
     }
     try {
         const userCreated = await User.create(userObj);
-        const postResponse = {
-            name: userCreated.name,
-            userId: userCreated.userId,
-            email: userCreated.email,
-            userTypes: userCreated.userType,
-            userStatus: userCreated.userStatus,
-            createdAt: userCreated.createdAt,
-            updatedAt: userCreated.updatedAt
-        }
-        res.status(201).send(postResponse);
+        // const postResponse = {
+        //     name: userCreated.name,
+        //     userId: userCreated.userId,
+        //     email: userCreated.email,
+        //     userTypes: userCreated.userType,
+        //     userStatus: userCreated.userStatus,
+        //     createdAt: userCreated.createdAt,
+        //     updatedAt: userCreated.updatedAt
+        // }
+        res.status(201).send(objectConverter.userCreated(userCreated));
     } catch (err) {
         console.log("Some error while saving the user in db", err.message);
         res.status(500).send({

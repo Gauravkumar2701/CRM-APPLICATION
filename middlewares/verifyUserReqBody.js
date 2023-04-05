@@ -18,7 +18,7 @@ const validateUserRequestBody = async(req, res, next) => {
 
     const userId = await User.findOne({userId: req.body.userId})
     if (userId != null){
-        res.status(400).send({message: "Failed: username already exist."});
+        res.status(400).send({message: "Failed: userId already exist."});
         return;
     }
         

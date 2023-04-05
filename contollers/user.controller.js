@@ -81,7 +81,7 @@ exports.finById = async(req, res) => {
     var users = await User.findOne({userId: requestedUserId});
 
     if (users){
-        res.status(200).send(users);
+        res.status(200).send(objectConverter.userResponse([users]));
     }else{
         res.status(400).send({message: `UserId [${requestedUserId}] doesn't exist`});
         return;
